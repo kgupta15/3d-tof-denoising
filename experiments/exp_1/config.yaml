@@ -1,0 +1,52 @@
+title: 'exp_1'
+train:
+  gpu: 1
+  resume: False
+  hyperparameters:
+    lr: 0.001
+    lr_decay: 0.5
+    lr_decay_epoch: 10
+    total_epochs: 100
+    momentum: 1
+    weight_decay: 1
+  checkpoints:
+    loc: 'runs/checkpoints'
+    ckpt_fname: 'checkpoint.pth.tar'
+    best_ckpt_fname: 'best_checkpoint.pth.tar'
+  logs: 
+    loc: 'logs/train'
+    log_interval: 10
+test:
+  gpu: 1
+  hyperparameters:
+    lr: 0.001
+    lr_decay: 0.5
+    lr_decay_epoch: 10
+    total_epochs: 100
+    momentum: 1
+    weight_decay: 1
+evaluate:
+  gpu: 1   
+  hyperparameters:
+    lr: 0.001
+    lr_decay: 0.5
+    lr_decay_epoch: 10
+    total_epochs: 100
+    momentum: 1
+    weight_decay: 1
+data:
+  num_classes: 10
+  batch_size: 200
+  valid_size: 0.1
+  random_seed: 0.4
+  shuffle: False
+  # If using CUDA, turn pin_memory=True and workers=1
+  pin_memory: True
+  workers: 1
+  augment: False
+  show_sample: True
+gpu: 1
+distributed: False
+world_size: 1
+dist_backend: tcp
+dist_url: 'tcp://192.168.19.162:10443'
