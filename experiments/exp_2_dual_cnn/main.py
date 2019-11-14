@@ -24,6 +24,7 @@ import torchvision.datasets as datasets
 from torch.autograd import Variable
 from tensorboardX import SummaryWriter
 
+from dataloader import Flat_ModelA, Flat_ModelB
 from model import Model_A, Model_B
 from trainer import Trainer
 from evaluator import Evaluator
@@ -67,6 +68,7 @@ def main(args):
     else: return
 
     # Data Loading
+    """
     train_dataset = torchvision.datasets.MNIST(root=os.path.join(parent_dir, 'data'),
                                            train=True,
                                            transform=transforms.ToTensor(),
@@ -75,6 +77,8 @@ def main(args):
     test_dataset = torchvision.datasets.MNIST(root=os.path.join(parent_dir, 'data'),
                                               train=False,
                                               transform=transforms.ToTensor())
+    
+
 
     if config_a.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
@@ -88,6 +92,28 @@ def main(args):
     val_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=config_a.data.batch_size, shuffle=config_a.data.shuffle,
         num_workers=config_a.data.workers, pin_memory=config_a.data.pin_memory)
+    """
+
+    train_dataset = Flat_ModelA(args=config_a.data,
+                                train=True,
+                                transform=transforms.ToTensor())
+
+    test_dataset  = Flat_ModelB(args=config_a.data,
+                                train=False,
+                                transform=transforms.ToTensor())
+
+    if args.distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+    else:
+        train_sampler = None
+
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset, batch_size=config.data['batch_size'], shuffle=config.data['shuffle'],
+        num_workers=config.data['workers'], pin_memory=config.data['pin_memory'], sampler=train_sampler)
+
+    val_loader = torch.utils.data.DataLoader(
+        test_dataset, batch_size=config.data['batch_size'], shuffle=config.data['shuffle'],
+        num_workers=config.data['workers'], pin_memory=config.data['pin_memory'])
 
     if args.train:
     	# trainer settings
