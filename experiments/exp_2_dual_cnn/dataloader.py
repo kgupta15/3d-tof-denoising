@@ -23,15 +23,15 @@ warnings.filterwarnings("ignore")
 
 plt.ion()   # interactive mode
 
-# static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
-# dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
-# full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
-# gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
+static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
+dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
+full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
-static = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
-dynamic = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
-full = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
-gt = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
+# static = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
+# dynamic = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
+# full = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+# gt = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
 static_data = []
 dynamic_data = []
