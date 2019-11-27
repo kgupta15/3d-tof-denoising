@@ -107,8 +107,6 @@ def loadTestData_A(args):
 # 	light = np.where(light=='-point-light-source', 1, light)
 
 params = np.load(join(static, 'data.npy'))
-for i in range(len(params)):
-	params[i] = np.where(params[i]=='-point-light-source', 1, params[i])
 
 def loadTrainingData_A(args):
 	fdm = []
@@ -118,7 +116,8 @@ def loadTrainingData_A(args):
 			false_dm = np.fromfile(join(full, i), dtype=np.int32)
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
-			parameters.append(params[0])
+			parameters.append(params[0][1:])
+			# parameters.append(params[0])
 		except:
 			print('[!] File {} not found'.format(i))
 
