@@ -107,6 +107,8 @@ def loadTestData_A(args):
 # 	light = np.where(light=='-point-light-source', 1, light)
 
 params = np.load(join(static, 'data.npy'))
+for i in range(len(params)):
+	params[i] = np.where(params[i]=='-point-light-source', 1, params[i])
 
 def loadTrainingData_A(args):
 	fdm = []
