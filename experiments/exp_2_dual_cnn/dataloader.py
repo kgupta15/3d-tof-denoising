@@ -98,13 +98,15 @@ def loadTestData_A(args):
 
 	return (fdm, parameters)
 """
-param = {}
-keys = ['scene', 'prop_idx', 'cam']
-with open(join(static, "1569126364657171.pickle"), 'rb') as file:
-	data = pickle.load(file)
-	param = dict((k, data[k]) for k in keys if k in data)
-	light = np.array(param['scene']['light'])
-	light = np.where(light=='-point-light-source', 1, light)
+# param = {}
+# keys = ['scene', 'prop_idx', 'cam']
+# with open(join(static, "1569126364657171.pickle"), 'rb') as file:
+# 	data = pickle.load(file)
+# 	param = dict((k, data[k]) for k in keys if k in data)
+# 	light = np.array(param['scene']['light'])
+# 	light = np.where(light=='-point-light-source', 1, light)
+
+params = np.load(join(static, 'data.npy'))
 
 def loadTrainingData_A(args):
 	fdm = []
@@ -114,7 +116,7 @@ def loadTrainingData_A(args):
 			false_dm = np.fromfile(join(full, i), dtype=np.int32)
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
-			parameters.append(light)
+			parameters.append(params[0])
 		except:
 			print('[!] File {} not found'.format(i))
 
