@@ -35,11 +35,7 @@ evaluate:
     momentum: 1
     weight_decay: 1
 data:
-  parameters:
-    scatlevel: 3
-    light_type: 3
-    light_params: 4
-    scene: 5
+  parameters: 18
   batch_size: 200
   valid_size: 0.1
   random_seed: 0.4

@@ -49,7 +49,7 @@ class Model_A(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(64),            
             nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(in_features=53*64*64, out_features=self.config.data.parameters.light_params)
+        self.fc = nn.Linear(in_features=53*64*64, out_features=self.config.data.parameters)
 
     def forward(self, x):
         out = self.layer1(x)
