@@ -35,21 +35,21 @@ class Model_A(nn.Module):
             nn.BatchNorm2d(32),            
             nn.MaxPool2d(kernel_size=2, stride=2))
         self.layer3 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=5, stride=1, padding=2),
-            nn.ReLU(),
-            nn.BatchNorm2d(32),            
-            nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer4 = nn.Sequential(
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, stride=1, padding=2),
             nn.ReLU(),
             nn.BatchNorm2d(64),            
             nn.MaxPool2d(kernel_size=2, stride=2))
-        self.layer5 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=5, stride=1, padding=2),
+        self.layer4 = nn.Sequential(
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=5, stride=1, padding=2),
             nn.ReLU(),
-            nn.BatchNorm2d(64),            
+            nn.BatchNorm2d(32),            
             nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(in_features=53*64*64, out_features=self.config.data.parameters)
+        self.layer5 = nn.Sequential(
+            nn.Conv2d(in_channels=32, out_channels=16, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(16),            
+            nn.MaxPool2d(kernel_size=2, stride=2))
+        self.fc = nn.Linear(in_features=53*64*16, out_features=self.config.data.parameters)
 
     def forward(self, x):
         out = self.layer1(x)
