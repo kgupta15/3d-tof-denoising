@@ -29,7 +29,7 @@ class Evaluator(object):
         return True
 
     def setData(self, data):
-        seld.data = data
+        self.data = data
         return True
 
     def setModel(self, model):
@@ -85,11 +85,11 @@ class Evaluator(object):
                 pred = output.max(1, keepdim=True)[1]
                 correct += pred.eq(labels.view_as(pred)).sum().item()
 
-            self.eval_loss /= len(self.data.dataset)
+            self.eval_loss /= len(self.data)
             summary_writer.add_scalar('eval_loss', self.eval_loss)
 
             print('\nEval Set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-                self.eval_loss, correct, len(self.data.dataset),
-                100. * correct / len(self.data.dataset)))
+                self.eval_loss, correct, len(self.data),
+                100. * correct / len(self.data)))
 
             return self.eval_loss

@@ -109,13 +109,14 @@ class Trainer(object):
             raise ValueError('[-] No Data available to train on')
         self.train_loss = 0
         self.model.train()
-        for batch_idx, (images, labels) in enumerate(self.data):
+        for batch_idx, (images, parameters) in enumerate(self.data):
+            print('Type of images is : {}'.format(images.type))
             if self.config.gpu:
                 images = images.to(device)
-                labels = labels.to(device)
+                parameters = parameters.to(device)
 
             output = self.model(images)
-            loss = self.criterion(output, labels)
+            loss = self.criterion(output, parameters)
 
             self.optimizer.zero_grad()
             loss.backward()

@@ -1,4 +1,4 @@
-title: 'exp_1:model_b'
+title: 'exp_2:model_b'
 train:
   gpu: 1
   resume: False

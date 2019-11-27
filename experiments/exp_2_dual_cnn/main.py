@@ -102,18 +102,18 @@ def main(args):
                                 train=False,
                                 transform=transforms.ToTensor())
 
-    if args.distributed:
+    if config_a.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
     else:
         train_sampler = None
 
     train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=config.data['batch_size'], shuffle=config.data['shuffle'],
-        num_workers=config.data['workers'], pin_memory=config.data['pin_memory'], sampler=train_sampler)
+        train_dataset, batch_size=config_a.data.batch_size, shuffle=config_a.data.shuffle,
+        num_workers=config_a.data.workers, pin_memory=config_a.data.pin_memory, sampler=train_sampler)
 
     val_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=config.data['batch_size'], shuffle=config.data['shuffle'],
-        num_workers=config.data['workers'], pin_memory=config.data['pin_memory'])
+        test_dataset, batch_size=config_a.data.batch_size, shuffle=config_a.data.shuffle,
+        num_workers=config_a.data.workers, pin_memory=config_a.data.pin_memory)
 
     if args.train:
     	# trainer settings

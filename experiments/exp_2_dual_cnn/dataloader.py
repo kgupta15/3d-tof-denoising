@@ -6,12 +6,14 @@ from os.path import isfile, join
 import glob
 import pickle
 import imageio
-import cv2
 import torch
 import pandas as pd
+import h5py
+import cv2
 from skimage import io, transform
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils
 
@@ -21,10 +23,15 @@ warnings.filterwarnings("ignore")
 
 plt.ion()   # interactive mode
 
-static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
-dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
-full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
-gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
+# static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
+# dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
+# full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+# gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
+
+static = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
+dynamic = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
+full = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+gt = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
 static_data = []
 dynamic_data = []
@@ -46,7 +53,9 @@ for f in glob.glob("*.pickle"):
 full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
 image_files = list(set(full_files) & set(gt_files))
+image_files = image_files[:4]
 
+"""
 def loadTrainingData_A(args):
 	fdm = []
 	parameters = []
@@ -88,6 +97,42 @@ def loadTestData_A(args):
 			print('[!] File {} not found'.format(i))
 
 	return (fdm, parameters)
+"""
+param = {}
+keys = ['scene', 'prop_idx', 'cam']
+with open(join(static, "1569126364657171.pickle"), 'rb') as file:
+	data = pickle.load(file)
+	param = dict((k, data[k]) for k in keys if k in data)
+	light = np.array(param['scene']['light'])
+	light = np.where(light=='-point-light-source', 1, light)
+
+def loadTrainingData_A(args):
+	fdm = []
+	parameters = []
+	for i in image_files:
+		try:
+			false_dm = np.fromfile(join(full, i), dtype=np.int32)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			fdm.append(false_dm)
+			parameters.append(light)
+		except:
+			print('[!] File {} not found'.format(i))
+
+	return (fdm, parameters)
+
+def loadTestData_A(args):
+	fdm = []
+	parameters = []
+	for i in image_files:
+		try:
+			false_dm = np.fromfile(join(full, i), dtype=np.int32)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			fdm.append(false_dm)
+			parameters.append(light)
+		except:
+			print('[!] File {} not found'.format(i))
+
+	return (fdm, parameters)
 
 def loadTrainingData_B(args):
 	fdm = []
@@ -118,6 +163,30 @@ def loadTestData_B(args):
 		parameters.append(param)
 	return (fdm, parameters, tdm)
 
+def loadDeeptofTrainingData(args):
+	depth_ref_images = []
+	mpi_abs_images = []
+	with h5py.File('DeepToF_training_6.7k_256x256.h5', 'r') as f:
+		depth_ref = list(f['depth_ref'])
+		mpi_abs = list(f['mpi_abs'])
+	for i in range(len(depth_ref)):
+		depth_ref_images.append(cv2.imresize(np.reshape(depth_ref[0], (256, 256)), (424, 512)))
+		mpi_abs_images.append(cv2.imresize(np.reshape(mpi_abs[0], (256, 256)), (424, 512)))
+
+	return (depth_ref_images, mpi_abs_images)
+
+def loadDeeptofTestData(args):
+	depth_ref_images = []
+	mpi_abs_images = []
+	with h5py.File('DeepToF_validation_1.7k_256x256.h5', 'r') as f:
+		depth_ref = list(f['depth_ref'])
+		mpi_abs = list(f['mpi_abs'])
+	for i in range(len(depth_ref)):
+		depth_ref_images.append(cv2.imresize(np.reshape(depth_ref[0], (256, 256)), (424, 512)))
+		mpi_abs_images.append(cv2.imresize(np.reshape(mpi_abs[0], (256, 256)), (424, 512)))
+	
+	return (depth_ref_images, mpi_abs_images)
+
 """
 
 Model A
@@ -141,11 +210,11 @@ class Flat_ModelA(Dataset):
 			self.fdm, self.parameters = loadTrainingData_A(args)
 		else:
 			self.fdm, self.parameters = loadTestData_A(args)
-		self.data_size = 0
-		self.transform = transform
+		self.data_size = len(self.parameters)
+		self.transform = transforms.Compose([transforms.ToTensor()])
 
 	def __getitem__(self, index):
-		return (self.fdm[index], self.parameters[index]) 
+		return (self.fdm[index], torch.from_numpy(self.parameters[index]))
 
 	def __len__(self):
 		return self.data_size
@@ -154,10 +223,26 @@ class Flat_ModelB(Dataset):
 	def __init__(self, args, train=True, transform=None):
 		self.args = args
 		if train == True:
-			self.fdm, self.parameters, self.tdm = loadTrainingData_B(args)
+			self.fdm, self.parameters, self.tdm = loadTrainingData_B(self.args)
 		else:
-			self.fdm, self.parameters, self.tdm = loadTestData_B(args)
-		self.data_size = len(self.fdm)
+			self.fdm, self.parameters, self.tdm = loadTestData_B(self.args)
+		self.data_size = len(self.parameters)
+		self.transform = transform
+
+	def __getitem__(self, index):
+		return (self.fdm[index], self.parameters[index], self.tdm[index])
+
+	def __len__(self):
+		return self.data_size
+
+class Deeptof_Data(Dataset):
+	def __init__(self, args, train=True, transform=None):
+		self.args = args
+		if train == True:
+			self.fdm, self.parameters, self.tdm = loadDeeptofTrainingData(self.args)
+		else:
+			self.fdm, self.parameters, self.tdm = loadDeeptofTestData(self.args)
+		self.data_size = len(self.parameters)
 		self.transform = transform
 
 	def __getitem__(self, index):
