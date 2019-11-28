@@ -110,7 +110,6 @@ class Trainer(object):
         self.train_loss = 0
         self.model.train()
         for batch_idx, (images, parameters) in enumerate(self.data):
-            print('Type of images is : {}'.format(images.type))
             if self.config.gpu:
                 images = images.to(device)
                 parameters = parameters.to(device)
