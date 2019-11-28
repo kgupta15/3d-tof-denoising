@@ -36,13 +36,13 @@ evaluate:
     weight_decay: 1
 data:
   parameters: 18
-  batch_size: 30
+  batch_size: 60
   valid_size: 0.1
   random_seed: 0.4
   shuffle: False
   # If using CUDA, turn pin_memory=True and workers=1
   pin_memory: True
-  workers: 1
+  workers: 0
   augment: False
   show_sample: True
 gpu: 1
