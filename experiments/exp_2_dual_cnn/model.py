@@ -49,16 +49,23 @@ class Model_A(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(16),            
             nn.MaxPool2d(kernel_size=2, stride=2))
-        self.fc = nn.Linear(in_features=53*64*16, out_features=self.config.data.parameters)
+        self.fc = nn.Linear(in_features=13*16*16, out_features=self.config.data.parameters)
 
     def forward(self, x):
         out = self.layer1(x)
+        # print("Layer 1 Output Shape : {}".format(out.shape))
         out = self.layer2(out)
+        # print("Layer 2 Output Shape : {}".format(out.shape))
         out = self.layer3(out)
+        # print("Layer 3 Output Shape : {}".format(out.shape))
         out = self.layer4(out)
+        # print("Layer 4 Output Shape : {}".format(out.shape))
         out = self.layer5(out)
+        # print("Layer 5 Output Shape : {}".format(out.shape))
         out = out.reshape(out.size(0), -1)
+        # print("Layer reshape Output Shape : {}".format(out.shape))
         out = self.fc(out)
+        # print("Layer FC Output Shape : {}".format(out.shape))
         return out
 
 class Model_B(nn.Module):
