@@ -58,6 +58,7 @@ def main(args):
     	config_a = mapper(**config_dict)
 
     model = Model_A(config_a)
+    model = model.double()
     plt.ion()
 
     if config_a.distributed:
