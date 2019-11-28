@@ -218,7 +218,7 @@ class Flat_ModelA(Dataset):
 		self.transform = transforms.Compose([transforms.ToTensor()])
 
 	def __getitem__(self, index):
-		return (self.transform(self.fdm[index]), torch.from_numpy(self.parameters[index]).double())
+		return (self.transform(self.fdm[index]).double(), torch.from_numpy(self.parameters[index]).double())
 
 	def __len__(self):
 		return self.data_size
