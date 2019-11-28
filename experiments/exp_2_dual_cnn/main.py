@@ -118,7 +118,7 @@ def main(args):
     if args.train:
     	# trainer settings
     	trainer = Trainer(config_a.train, train_loader, model)
-    	criterion = nn.CrossEntropyLoss().to(device)
+    	criterion = nn.MSELoss().to(device)
     	optimizer = torch.optim.Adam(model.parameters(), config_a.train.hyperparameters.lr)
     	trainer.setCriterion(criterion)
     	trainer.setOptimizer(optimizer)
