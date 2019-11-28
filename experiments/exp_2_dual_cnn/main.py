@@ -124,7 +124,7 @@ def main(args):
     	trainer.setCriterion(criterion)
     	trainer.setOptimizer(optimizer)
     	# evaluator settings
-    	evaluator = Evaluator(config_a.evaluate, val_loader, model)
+    	evaluator = Evaluator(config_a.evaluate, train_loader, model)
     	optimizer = torch.optim.Adam(model.parameters(), lr=config_a.evaluate.hyperparameters.lr, 
     		weight_decay=config_a.evaluate.hyperparameters.weight_decay)
     	evaluator.setCriterion(criterion)

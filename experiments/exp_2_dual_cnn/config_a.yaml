@@ -36,7 +36,7 @@ evaluate:
     weight_decay: 1
 data:
   parameters: 18
-  batch_size: 200
+  batch_size: 30
   valid_size: 0.1
   random_seed: 0.4
   shuffle: False
