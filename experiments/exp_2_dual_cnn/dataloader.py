@@ -53,6 +53,7 @@ for f in glob.glob("*.pickle"):
 full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
 image_files = list(set(full_files) & set(gt_files))
+print(len(image_files))
 
 """
 def loadTrainingData_A(args):
@@ -213,7 +214,7 @@ class Flat_ModelA(Dataset):
 			self.fdm, self.parameters = loadTrainingData_A(args)
 		else:
 			self.fdm, self.parameters = loadTestData_A(args)
-		self.data_size = len(self.parameters)
+		self.data_size = len(self.fdm)
 		self.transform = transforms.Compose([transforms.ToTensor()])
 
 	def __getitem__(self, index):
