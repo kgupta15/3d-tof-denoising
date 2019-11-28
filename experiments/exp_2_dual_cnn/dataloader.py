@@ -53,7 +53,6 @@ for f in glob.glob("*.pickle"):
 full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
 image_files = list(set(full_files) & set(gt_files))
-image_files = image_files[:4]
 
 """
 def loadTrainingData_A(args):
