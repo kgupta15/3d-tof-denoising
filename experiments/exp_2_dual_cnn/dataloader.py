@@ -108,7 +108,7 @@ def loadTestData_A(args):
 
 params = np.load(join(static, 'data.npy'))
 param = np.where(params[0]=='-point-light-source', 1, params[0])
-param = param[1:].astype(double)
+param = param[1:].astype(np.float64)
 
 def loadTrainingData_A(args):
 	fdm = []
@@ -218,7 +218,7 @@ class Flat_ModelA(Dataset):
 		self.transform = transforms.Compose([transforms.ToTensor()])
 
 	def __getitem__(self, index):
-		return (self.transform(self.fdm[index]), torch.from_numpy(self.parameters[index]))
+		return (self.transform(self.fdm[index]), torch.from_numpy(self.parameters[index]).double())
 
 	def __len__(self):
 		return self.data_size
