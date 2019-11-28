@@ -26,6 +26,7 @@ plt.ion()   # interactive mode
 static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
 dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
 full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+ref = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/reflection"
 gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
 # static = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
@@ -52,7 +53,8 @@ for f in glob.glob("*.pickle"):
 
 full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
-image_files = list(set(full_files) & set(gt_files))
+ref_files  = [f for f in listdir(ref) if isfile(join(ref, f))]
+image_files = list(set(ref_files) & set(gt_files))
 print(len(image_files))
 
 """
