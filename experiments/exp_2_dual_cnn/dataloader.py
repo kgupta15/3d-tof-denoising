@@ -117,7 +117,7 @@ def loadTrainingData_A(args):
 	parameters = []
 	for i in image_files:
 		try:
-			false_dm = np.fromfile(join(full, i), dtype=np.int32)
+			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
 			parameters.append(param)
@@ -131,7 +131,7 @@ def loadTestData_A(args):
 	parameters = []
 	for i in image_files:
 		try:
-			false_dm = np.fromfile(join(full, i), dtype=np.int32)
+			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
 			parameters.append(light)
