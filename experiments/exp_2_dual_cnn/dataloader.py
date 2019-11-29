@@ -112,13 +112,14 @@ params = np.load(join(static, 'data.npy'))
 param_filenames = []
 for i in range(len(params)):
 	param_filenames.append(params[i,0].split('.')[0])
+image_files = list(set(image_files) & set(param_filenames))
 # param = np.where(params[0]=='-point-light-source', 1, params[0])
 # param = param[1:].astype(np.float64)
 
 print('Total parameters : {}'.format(len(param_filenames)))
 print('First parameter name : {}'.format(param_filenames[0]))
-# pos = np.where(param_filenames == image_files[0])
-# print(pos)
+pos = np.where(param_filenames == image_files[0])
+print(pos)
 
 def loadTrainingData_A(args):
 	fdm = []
