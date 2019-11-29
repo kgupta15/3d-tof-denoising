@@ -115,6 +115,9 @@ for i in params:
 # param = np.where(params[0]=='-point-light-source', 1, params[0])
 # param = param[1:].astype(np.float64)
 
+pos = np.where(param_filenames[0] == image_files[0])
+print(pos)
+
 def loadTrainingData_A(args):
 	fdm = []
 	parameters = []
