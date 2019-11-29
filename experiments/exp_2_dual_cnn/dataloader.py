@@ -114,11 +114,6 @@ for i in range(len(params)):
 	param_filenames.append(params[i,0].split('.')[0])
 image_files = list(set(image_files) & set(param_filenames))
 
-pos = param_filenames.index(image_files[0])
-param = params[pos, 1:]
-param = np.where(param == '-point-light-source', 1, param)
-print(param)
-
 def loadTrainingData_A(args):
 	fdm = []
 	parameters = []
@@ -129,7 +124,7 @@ def loadTrainingData_A(args):
 			fdm.append(false_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
-			param = np.where(param == '-point-light-source', 1, param)
+			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
 			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
