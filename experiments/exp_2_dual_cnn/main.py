@@ -49,6 +49,8 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def main(args):
+    # Model A: False Depth Map to Parameters' prediction
+    
     np.random.seed(0)
     torch.manual_seed(0)
 
@@ -57,49 +59,23 @@ def main(args):
     	config_dict = yaml.safe_load(stream)
     	config_a = mapper(**config_dict)
 
-    model = Model_A(config_a)
-    model = model.double()
+    model_a = Model_A(config_a)
+    model_a = model_a.double()
     plt.ion()
 
     if config_a.distributed:
-    	model.to(device)
-    	model = nn.parallel.DistributedDataParallel(model)
+    	model_a.to(device)
+    	model_a = nn.parallel.DistributedDataParallel(model_a)
     elif config_a.gpu:
-    	model = nn.DataParallel(model).to(device)
+    	model_a = nn.DataParallel(model_a).to(device)
     else: return
 
     # Data Loading
-    """
-    train_dataset = torchvision.datasets.MNIST(root=os.path.join(parent_dir, 'data'),
-                                           train=True,
-                                           transform=transforms.ToTensor(),
-                                           download=True)
-
-    test_dataset = torchvision.datasets.MNIST(root=os.path.join(parent_dir, 'data'),
-                                              train=False,
-                                              transform=transforms.ToTensor())
-    
-
-
-    if config_a.distributed:
-        train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
-    else:
-        train_sampler = None
-
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=config_a.data.batch_size, shuffle=config_a.data.shuffle,
-        num_workers=config_a.data.workers, pin_memory=config_a.data.pin_memory, sampler=train_sampler)
-
-    val_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=config_a.data.batch_size, shuffle=config_a.data.shuffle,
-        num_workers=config_a.data.workers, pin_memory=config_a.data.pin_memory)
-    """
-
     train_dataset = Flat_ModelA(args=config_a.data,
                                 train=True,
                                 transform=transforms.ToTensor())
 
-    test_dataset  = Flat_ModelB(args=config_a.data,
+    test_dataset  = Flat_ModelA(args=config_a.data,
                                 train=False,
                                 transform=transforms.ToTensor())
 
@@ -118,14 +94,14 @@ def main(args):
 
     if args.train:
     	# trainer settings
-    	trainer = Trainer(config_a.train, train_loader, model)
+    	trainer = Trainer(config_a.train, train_loader, model_a)
     	criterion = nn.MSELoss().to(device)
-    	optimizer = torch.optim.Adam(model.parameters(), config_a.train.hyperparameters.lr)
+    	optimizer = torch.optim.Adam(model_a.parameters(), config_a.train.hyperparameters.lr)
     	trainer.setCriterion(criterion)
     	trainer.setOptimizer(optimizer)
     	# evaluator settings
-    	evaluator = Evaluator(config_a.evaluate, train_loader, model)
-    	optimizer = torch.optim.Adam(model.parameters(), lr=config_a.evaluate.hyperparameters.lr, 
+    	evaluator = Evaluator(config_a.evaluate, test_loader, model_a)
+    	optimizer = torch.optim.Adam(model_a.parameters(), lr=config_a.evaluate.hyperparameters.lr, 
     		weight_decay=config_a.evaluate.hyperparameters.weight_decay)
     	evaluator.setCriterion(criterion)
 
@@ -161,11 +137,104 @@ def main(args):
             best_precision = max(prec1, best_precision)
             trainer.save_checkpoint({
                 'epoch': epoch+1,
-                'state_dict': model.state_dict(),
+                'state_dict': model_a.state_dict(),
                 'best_precision': best_precision,
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
 
+    # Model B: From (False Depth Map, Parameters) to True Depth Map prediction
+    """
+    np.random.seed(0)
+    torch.manual_seed(0)
+
+    with open('config_b.yaml', 'r') as file:
+        stream = file.read()
+        config_dict = yaml.safe_load(stream)
+        config_b = mapper(**config_dict)
+
+    model_b = Model_B(config_b)
+    model_b = model_b.double()
+    plt.ion()
+
+    if config_b.distributed:
+        model_b.to(device)
+        model_b = nn.parallel.DistributedDataParallel(model_b)
+    elif config_b.gpu:
+        model_b = nn.DataParallel(model_b).to(device)
+    else: return
+
+    # Data Loading
+    train_dataset = Flat_ModelB(args=config_b.data,
+                                train=True,
+                                transform=transforms.ToTensor())
+
+    test_dataset  = Flat_ModelB(args=config_b.data,
+                                train=False,
+                                transform=transforms.ToTensor())
+
+    if config_b.distributed:
+        train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+    else:
+        train_sampler = None
+
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset, batch_size=config_b.data.batch_size, shuffle=config_b.data.shuffle,
+        num_workers=config_b.data.workers, pin_memory=config_b.data.pin_memory, sampler=train_sampler)
+
+    val_loader = torch.utils.data.DataLoader(
+        test_dataset, batch_size=config_b.data.batch_size, shuffle=config_b.data.shuffle,
+        num_workers=config_b.data.workers, pin_memory=config_b.data.pin_memory)
+
+    if args.train:
+        # trainer settings
+        trainer = Trainer(config_b.train, train_loader, model_b)
+        criterion = nn.MSELoss().to(device)
+        optimizer = torch.optim.Adam(model_b.parameters(), config_b.train.hyperparameters.lr)
+        trainer.setCriterion(criterion)
+        trainer.setOptimizer(optimizer)
+        # evaluator settings
+        evaluator = Evaluator(config_b.evaluate, train_loader, model_b)
+        optimizer = torch.optim.Adam(model_b.parameters(), lr=config_b.evaluate.hyperparameters.lr, 
+            weight_decay=config_b.evaluate.hyperparameters.weight_decay)
+        evaluator.setCriterion(criterion)
+
+    if args.test:
+        pass
+
+    # Turn on benchmark if the input sizes don't vary
+    # It is used to find best way to run models on your machine
+    cudnn.benchmark = True
+    start_epoch = 0
+    best_precision = 0
+    
+    # optionally resume from a checkpoint
+    if config_b.train.resume:
+        [start_epoch, best_precision] = trainer.load_saved_checkpoint(checkpoint=None)
+
+    # change value to test.hyperparameters on testing
+    for epoch in range(start_epoch, config_b.train.hyperparameters.total_epochs):
+        if config_b.distributed:
+            train_sampler.set_epoch(epoch)
+
+        if args.train:
+            trainer.adjust_learning_rate(epoch)
+            trainer.train(epoch)
+            prec1 = evaluator.evaluate(epoch)
+
+        if args.test:
+            pass
+
+        # remember best prec@1 and save checkpoint
+        if args.train:
+            is_best = prec1 > best_precision
+            best_precision = max(prec1, best_precision)
+            trainer.save_checkpoint({
+                'epoch': epoch+1,
+                'state_dict': model_b.state_dict(),
+                'best_precision': best_precision,
+                'optimizer': optimizer.state_dict(),
+            }, is_best, checkpoint=None)
+    """
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
