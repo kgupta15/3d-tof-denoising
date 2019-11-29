@@ -139,7 +139,10 @@ def loadTestData_A(args):
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
-			parameters.append(light)
+			pos = param_filenames.index(i)
+			param = np.array(params[pos, 1:])
+			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
+			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
 

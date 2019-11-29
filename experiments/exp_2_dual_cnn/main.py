@@ -100,7 +100,7 @@ def main(args):
     	trainer.setCriterion(criterion)
     	trainer.setOptimizer(optimizer)
     	# evaluator settings
-    	evaluator = Evaluator(config_a.evaluate, test_loader, model_a)
+    	evaluator = Evaluator(config_a.evaluate, val_loader, model_a)
     	optimizer = torch.optim.Adam(model_a.parameters(), lr=config_a.evaluate.hyperparameters.lr, 
     		weight_decay=config_a.evaluate.hyperparameters.weight_decay)
     	evaluator.setCriterion(criterion)
