@@ -55,7 +55,7 @@ full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
 ref_files  = [f for f in listdir(ref) if isfile(join(ref, f))]
 image_files = list(set(ref_files) & set(gt_files))
-print(len(image_files))
+print('Total images : {}'.format(len(image_files)))
 
 """
 def loadTrainingData_A(args):
@@ -115,8 +115,10 @@ for i in range(len(params)):
 # param = np.where(params[0]=='-point-light-source', 1, params[0])
 # param = param[1:].astype(np.float64)
 
-pos = np.where(param_filenames == image_files[0])
-print(pos)
+print('Total parameters : {}'.format(len(param_filenames)))
+print('First parameter name : {}'.format(param_filenames[0]))
+# pos = np.where(param_filenames == image_files[0])
+# print(pos)
 
 def loadTrainingData_A(args):
 	fdm = []
