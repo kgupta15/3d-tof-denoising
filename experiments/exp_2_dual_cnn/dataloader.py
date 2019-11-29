@@ -110,8 +110,8 @@ def loadTestData_A(args):
 
 params = np.load(join(static, 'data.npy'))
 param_filenames = []
-for i in params:
-	param_filenames.append(os.path.splitext(i[0])[0])
+for i in range(len(params)):
+	param_filenames.append(params[i,0].split('.')[0])
 # param = np.where(params[0]=='-point-light-source', 1, params[0])
 # param = param[1:].astype(np.float64)
 
