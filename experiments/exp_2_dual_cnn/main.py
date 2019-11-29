@@ -50,7 +50,7 @@ def str2bool(v):
 
 def main(args):
     # Model A: False Depth Map to Parameters' prediction
-    
+    """
     np.random.seed(0)
     torch.manual_seed(0)
 
@@ -141,9 +141,9 @@ def main(args):
                 'best_precision': best_precision,
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
+    """
 
     # Model B: From (False Depth Map, Parameters) to True Depth Map prediction
-    """
     np.random.seed(0)
     torch.manual_seed(0)
 
@@ -193,7 +193,7 @@ def main(args):
         trainer.setCriterion(criterion)
         trainer.setOptimizer(optimizer)
         # evaluator settings
-        evaluator = Evaluator(config_b.evaluate, train_loader, model_b)
+        evaluator = Evaluator(config_b.evaluate, val_loader, model_b)
         optimizer = torch.optim.Adam(model_b.parameters(), lr=config_b.evaluate.hyperparameters.lr, 
             weight_decay=config_b.evaluate.hyperparameters.weight_decay)
         evaluator.setCriterion(criterion)
@@ -234,7 +234,7 @@ def main(args):
                 'best_precision': best_precision,
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
-    """
+
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)

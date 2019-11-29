@@ -155,10 +155,9 @@ def loadTrainingData_B(args):
 	for data in static_data:
 		fdm.append(data['depth_true'])
 		tdm.append(data['depth_true'])
-		param = {}
-		param['scene'] = data['scene']
-		param['prop_idx'] = data['prop_idx']
-		param['cam'] = data['cam']
+		pos = param_filenames.index(i)
+		param = np.array(params[pos, 1:])
+		param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
 		parameters.append(param)
 	return (fdm, parameters, tdm)
 
@@ -167,13 +166,12 @@ def loadTestData_B(args):
 	fdm = []
 	tdm = []
 	parameters = []
-	for data in dynamic_data:
+	for data in static_data:
 		fdm.append(data['depth_true'])
 		tdm.append(data['depth_true'])
-		param = {}
-		param['scene'] = data['scene']
-		param['prop_idx'] = data['prop_idx']
-		param['cam'] = data['cam']
+		pos = param_filenames.index(i)
+		param = np.array(params[pos, 1:])
+		param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
 		parameters.append(param)
 	return (fdm, parameters, tdm)
 
