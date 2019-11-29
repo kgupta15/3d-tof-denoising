@@ -116,6 +116,7 @@ image_files = list(set(image_files) & set(param_filenames))
 
 pos = param_filenames.index(image_files[0])
 param = params[pos, 1:]
+param = np.where(param == '-point-light-source', 1, param)
 print(param)
 
 def loadTrainingData_A(args):
@@ -127,7 +128,8 @@ def loadTrainingData_A(args):
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
 			pos = param_filenames.index(i)
-			param = params[pos, 1:]
+			param = np.array(params[pos, 1:])
+			param = np.where(param == '-point-light-source', 1, param)
 			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
