@@ -98,21 +98,24 @@ class Model_B(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(1))
         # CNN layer for parameters
-        self.param_layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5, stride=2, padding=2),
+        self.param_fc = nn.Sequential(
+            nn.Linear(in_features=18, out_features=30),
             nn.ReLU(),
-            nn.BatchNorm2d(32))
+            nn.Linear(in_features=30, out_features=10)
+            )
 
     def forward(self, x, y):
         out = self.layer1(x)
         print('Shape of parameters : {}'.format(y.shape))
-        # out_param = self.param_layer1(y)
-        # print("LayerParam 1 Output Shape : {}".format(out_param.shape))
+        out_param = self.param_fc(y)
+        print("LayerParam 1 Output Shape : {}".format(out_param.shape))
         print("Layer 1 Output Shape : {}".format(out.shape))
         out = self.layer2(out)
         print("Layer 2 Output Shape : {}".format(out.shape))
         out = self.layer3(out)
-        out = torch.cat((out, y), dim=1)
+        N, C, H, W = out.shape
+        out_param = out_param.unsqueeze(-1).unsqueeze(-1).expand(N, -1, H, W)
+        out = torch.cat((out, out_param), dim=1)
         print("Layer 3 Output Shape : {}".format(out.shape))
         out = self.layer4(out)
         print("Layer 4 Output Shape : {}".format(out.shape))
