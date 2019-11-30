@@ -116,6 +116,7 @@ param_filenames = []
 for i in range(len(params)):
 	param_filenames.append(params[i,0].split('.')[0])
 image_files = list(set(image_files) & set(param_filenames))
+print('Total images : {}'.format(len(image_files)))
 
 def loadTrainingData_A(args):
 	fdm = []
