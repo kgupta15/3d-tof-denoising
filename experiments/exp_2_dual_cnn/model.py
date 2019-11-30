@@ -86,7 +86,7 @@ class Model_B(nn.Module):
             nn.ReLU(),
             nn.BatchNorm2d(32))
         self.layer4 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=5, stride=2, padding=2, output_padding=1),
+            nn.ConvTranspose2d(in_channels=42, out_channels=32, kernel_size=5, stride=2, padding=2, output_padding=1),
             nn.ReLU(),
             nn.BatchNorm2d(32))
         self.layer5 = nn.Sequential(
