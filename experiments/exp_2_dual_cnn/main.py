@@ -73,11 +73,11 @@ def main(args):
     # Data Loading
     train_dataset = Flat_ModelA(args=config_a.data,
                                 train=True,
-                                transform=transforms.ToTensor())
+                                transform=transforms.Compose([transforms.ToTensor()]))
 
     test_dataset  = Flat_ModelA(args=config_a.data,
                                 train=False,
-                                transform=transforms.ToTensor())
+                                transform=transforms.Compose([transforms.ToTensor()]))
 
     if config_a.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
@@ -166,11 +166,11 @@ def main(args):
     # Data Loading
     train_dataset = Flat_ModelB(args=config_b.data,
                                 train=True,
-                                transform=transforms.ToTensor())
+                                transform=transforms.Compose([transforms.ToTensor()]))
 
     test_dataset  = Flat_ModelB(args=config_b.data,
                                 train=False,
-                                transform=transforms.ToTensor())
+                                transform=transforms.Compose([transforms.ToTensor()]))
 
     if config_b.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
