@@ -253,7 +253,7 @@ class Flat_ModelB(Dataset):
 		else:
 			self.fdm, self.parameters, self.tdm = loadTestData_B(self.args)
 		self.data_size = len(self.parameters)
-		self.transform = transform
+		self.transform = transforms.Compose([transforms.ToTensor()])
 
 	def __getitem__(self, index):
 		return (self.transform(self.fdm[index]).double(), self.transform(torch.from_numpy(self.parameters[index])).double(), self.transform(self.tdm[index]).double())
