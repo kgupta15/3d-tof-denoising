@@ -152,13 +152,21 @@ def loadTrainingData_B(args):
 	fdm = []
 	tdm = []
 	parameters = []
-	for data in static_data:
-		fdm.append(data['depth_true'])
-		tdm.append(data['depth_true'])
-		pos = param_filenames.index(i)
-		param = np.array(params[pos, 1:])
-		param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
-		parameters.append(param)
+	for i in image_files:
+		try:
+			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			fdm.append(false_dm)
+			true_dm = np.fromfile(join(ref, i), dtype=np.int32)
+			true_dm = Image.fromarray(true_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			tdm.append(true_dm)
+			pos = param_filenames.index(i)
+			param = np.array(params[pos, 1:])
+			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
+			parameters.append(param)
+		except:
+			print('[!] File {} not found'.format(i))
+	print('FDM Shape : {}'.format(fdm[0].shape))	
 	return (fdm, parameters, tdm)
 
 
