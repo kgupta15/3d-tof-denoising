@@ -113,6 +113,7 @@ class Trainer_A(object):
             if self.config.gpu:
                 fdm = fdm.to(device)
                 parameters = parameters.to(device)
+                print('shape of parameters for model a : {}'.format(parameters.shape))
 
             output = self.model(fdm)
             loss = self.criterion(output, parameters)

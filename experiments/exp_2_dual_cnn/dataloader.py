@@ -23,15 +23,18 @@ warnings.filterwarnings("ignore")
 
 plt.ion()   # interactive mode
 
+## paths for remote server
 static = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
 dynamic = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
 full = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
 ref = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/reflection"
 gt = "/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
+## paths for local
 # static = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/static"
 # dynamic = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/trans_render/dyn"
 # full = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/full"
+# ref = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/reflection"
 # gt = "C:/Users/kapil/Documents/3d-tof-denoising/data/FLAT/FLAT/kinect/gt" 
 
 static_data = []
