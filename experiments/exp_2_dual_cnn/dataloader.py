@@ -167,7 +167,7 @@ def loadTrainingData_B(args):
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
 			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
-			param = np.repeat(param[:, np.newaxis], 64, axis=1)
+			# param = np.repeat(param[:, np.newaxis], 64, axis=1)
 			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
@@ -189,7 +189,7 @@ def loadTestData_B(args):
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
 			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
-			param = np.repeat(param[:, np.newaxis], 64, axis=1)
+			# param = np.repeat(param[:, np.newaxis], 64, axis=1)
 			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
