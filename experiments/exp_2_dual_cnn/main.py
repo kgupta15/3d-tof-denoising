@@ -50,7 +50,6 @@ def str2bool(v):
 
 def main(args):
     # Model A: False Depth Map to Parameters' prediction
-    """
     np.random.seed(0)
     torch.manual_seed(0)
 
@@ -141,9 +140,10 @@ def main(args):
                 'best_precision': best_precision,
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
-    """
+
 
     # Model B: From (False Depth Map, Parameters) to True Depth Map prediction
+    """
     np.random.seed(0)
     torch.manual_seed(0)
 
@@ -234,6 +234,7 @@ def main(args):
                 'best_precision': best_precision,
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
+    """
 
 
 if __name__ == '__main__':
