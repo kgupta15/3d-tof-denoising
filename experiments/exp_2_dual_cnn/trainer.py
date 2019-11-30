@@ -127,7 +127,7 @@ class Trainer_A(object):
             if batch_idx % self.config.logs.log_interval == 0:
                 print(
                     'Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}\tlr: {:.6f}'.format(
-                    epoch+1, batch_idx * len(images), len(self.data.dataset),
+                    epoch+1, batch_idx * len(fdm), len(self.data.dataset),
                     100. * batch_idx / len(self.data),
                     loss.item() / len(self.data), self.curr_lr)
                 )
@@ -253,7 +253,7 @@ class Trainer_B(object):
             if batch_idx % self.config.logs.log_interval == 0:
                 print(
                     'Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}\tlr: {:.6f}'.format(
-                    epoch+1, batch_idx * len(images), len(self.data.dataset),
+                    epoch+1, batch_idx * len(fdm), len(self.data.dataset),
                     100. * batch_idx / len(self.data),
                     loss.item() / len(self.data), self.curr_lr)
                 )
