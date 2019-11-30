@@ -169,8 +169,8 @@ def loadTrainingData_B(args):
 			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
 			# param = np.repeat(param[:, np.newaxis], 64, axis=1)
 			parameters.append(param)
-		except:
-			print('[!] File {} not found'.format(i))
+		except Exception as e:
+			print('[!] Error opening file {}, {}'.format(i, e))
 	return (fdm, parameters, tdm)
 
 
@@ -191,8 +191,8 @@ def loadTestData_B(args):
 			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
 			# param = np.repeat(param[:, np.newaxis], 64, axis=1)
 			parameters.append(param)
-		except:
-			print('[!] File {} not found'.format(i))
+		except Exception as e:
+			print('[!] Error opening file {}, {}'.format(i, e))
 	return (fdm, parameters, tdm)
 
 def loadDeeptofTrainingData(args):
