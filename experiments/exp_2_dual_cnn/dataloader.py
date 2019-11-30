@@ -55,7 +55,7 @@ full_files = [f for f in listdir(full) if isfile(join(full, f))]
 gt_files   = [f for f in listdir(gt) if isfile(join(gt, f))]
 ref_files  = [f for f in listdir(ref) if isfile(join(ref, f))]
 image_files = list(set(ref_files) & set(gt_files))
-print('Total images : {}'.format(len(image_files)))
+# print('Total images : {}'.format(len(image_files)))
 
 """
 def loadTrainingData_A(args):
@@ -120,7 +120,7 @@ def loadTrainingData_A(args):
 	for i in image_files:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1]).rotate(90)
 			fdm.append(false_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
@@ -174,13 +174,20 @@ def loadTestData_B(args):
 	fdm = []
 	tdm = []
 	parameters = []
-	for data in static_data:
-		fdm.append(data['depth_true'])
-		tdm.append(data['depth_true'])
-		pos = param_filenames.index(i)
-		param = np.array(params[pos, 1:])
-		param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
-		parameters.append(param)
+	for i in image_files:
+		try:
+			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			fdm.append(false_dm)
+			true_dm = np.fromfile(join(ref, i), dtype=np.int32)
+			true_dm = Image.fromarray(true_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			tdm.append(true_dm)
+			pos = param_filenames.index(i)
+			param = np.array(params[pos, 1:])
+			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
+			parameters.append(param)
+		except:
+			print('[!] File {} not found'.format(i))
 	return (fdm, parameters, tdm)
 
 def loadDeeptofTrainingData(args):
