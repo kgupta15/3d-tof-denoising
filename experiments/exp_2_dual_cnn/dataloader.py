@@ -166,7 +166,7 @@ def loadTrainingData_B(args):
 			parameters.append(param)
 		except:
 			print('[!] File {} not found'.format(i))
-	print('FDM Shape : {}'.format(fdm[0].shape))	
+	print('FDM Shape : {}x{}'.format(fdm[0].size[0], fdm[0].size[1]))	
 	return (fdm, parameters, tdm)
 
 
