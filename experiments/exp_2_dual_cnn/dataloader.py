@@ -257,7 +257,7 @@ class Flat_ModelB(Dataset):
 		self.transform = transform
 
 	def __getitem__(self, index):
-		return (self.transform(self.fdm[index]), torch.from_numpy(self.parameters[index]).double(), self.transform(self.tdm[index]))
+		return (self.transform(self.fdm[index]).double(), torch.from_numpy(self.parameters[index]).double(), self.transform(self.tdm[index]).double())
 
 	def __len__(self):
 		return self.data_size
@@ -273,7 +273,7 @@ class Deeptof_Data(Dataset):
 		self.transform = transform
 
 	def __getitem__(self, index):
-		return (self.fdm[index], self.parameters[index], self.tdm[index])
+		return (self.transform(self.fdm[index]).double(), torch.from_numpy(self.parameters[index]).double(), self.transform(self.tdm[index]).double())
 
 	def __len__(self):
 		return self.data_size
