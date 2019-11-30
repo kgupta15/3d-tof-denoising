@@ -94,13 +94,13 @@ def main(args):
 
     if args.train:
     	# trainer settings
-    	trainer = Trainer(config_a.train, train_loader, model_a)
+    	trainer = Trainer_A(config_a.train, train_loader, model_a)
     	criterion = nn.MSELoss().to(device)
     	optimizer = torch.optim.Adam(model_a.parameters(), config_a.train.hyperparameters.lr)
     	trainer.setCriterion(criterion)
     	trainer.setOptimizer(optimizer)
     	# evaluator settings
-    	evaluator = Evaluator(config_a.evaluate, val_loader, model_a)
+    	evaluator = Evaluator_A(config_a.evaluate, val_loader, model_a)
     	optimizer = torch.optim.Adam(model_a.parameters(), lr=config_a.evaluate.hyperparameters.lr, 
     		weight_decay=config_a.evaluate.hyperparameters.weight_decay)
     	evaluator.setCriterion(criterion)
@@ -187,13 +187,13 @@ def main(args):
 
     if args.train:
         # trainer settings
-        trainer = Trainer(config_b.train, train_loader, model_b)
+        trainer = Trainer_B(config_b.train, train_loader, model_b)
         criterion = nn.MSELoss().to(device)
         optimizer = torch.optim.Adam(model_b.parameters(), config_b.train.hyperparameters.lr)
         trainer.setCriterion(criterion)
         trainer.setOptimizer(optimizer)
         # evaluator settings
-        evaluator = Evaluator(config_b.evaluate, val_loader, model_b)
+        evaluator = Evaluator_B(config_b.evaluate, val_loader, model_b)
         optimizer = torch.optim.Adam(model_b.parameters(), lr=config_b.evaluate.hyperparameters.lr, 
             weight_decay=config_b.evaluate.hyperparameters.weight_decay)
         evaluator.setCriterion(criterion)
