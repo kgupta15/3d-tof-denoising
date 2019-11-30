@@ -105,7 +105,7 @@ class Model_B(nn.Module):
 
     def forward(self, x, y):
         out = self.layer1(x)
-        out_param = self.param_layer1(y)
+        # out_param = self.param_layer1(y)
         print("LayerParam 1 Output Shape : {}".format(out_param.shape))
         print("Layer 1 Output Shape : {}".format(out.shape))
         out = self.layer2(out)
