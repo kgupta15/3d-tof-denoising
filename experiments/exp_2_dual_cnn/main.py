@@ -26,8 +26,8 @@ from tensorboardX import SummaryWriter
 
 from dataloader import Flat_ModelA, Flat_ModelB
 from model import Model_A, Model_B
-from trainer import Trainer
-from evaluator import Evaluator
+from trainer import Trainer_A, Trainer_B
+from evaluator import Evaluator_A, Evaluator_B
 from mapper import *
 
 current_path = os.path.abspath(getsourcefile(lambda:0))
