@@ -155,10 +155,10 @@ def loadTrainingData_B(args):
 	for i in image_files[:4]:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1]).rotate(90)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
 			true_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			true_dm = Image.fromarray(true_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1]).rotate(90)
+			true_dm = Image.fromarray(true_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			tdm.append(true_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
