@@ -15,7 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 class Trainer_A(object):
     """docstring for Trainer"""
     def __init__(self, config=None, data=None, model=None):
-        super(Trainer, self).__init__()
+        super(Trainer_A, self).__init__()
         self.config = config
         self.data = data
 
@@ -140,7 +140,7 @@ class Trainer_A(object):
 class Trainer_B(object):
     """docstring for Trainer"""
     def __init__(self, config=None, data=None, model=None):
-        super(Trainer, self).__init__()
+        super(Trainer_B, self).__init__()
         self.config = config
         self.data = data
 

@@ -15,7 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 class Evaluator_A(object):
     """docstring for Evaluator"""
     def __init__(self, config=None, data=None, model=None):
-        super(Evaluator, self).__init__()
+        super(Evaluator_A, self).__init__()
         self.config = config
         self.data = data
         self.eval_loss = 0
@@ -99,7 +99,7 @@ class Evaluator_A(object):
 class Evaluator_B(object):
     """docstring for Evaluator"""
     def __init__(self, config=None, data=None, model=None):
-        super(Evaluator, self).__init__()
+        super(Evaluator_B, self).__init__()
         self.config = config
         self.data = data
         self.eval_loss = 0
