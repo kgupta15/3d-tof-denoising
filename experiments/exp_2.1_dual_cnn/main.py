@@ -236,7 +236,18 @@ def main(args):
                 'optimizer': optimizer.state_dict(),
             }, is_best, checkpoint=None)
 
+    if args.test:
+        path = os.path.join(self.config_b.train.checkpoints.loc, \
+                self.config_b.train.checkpoints.ckpt_fname)
+        checkpoint = torch.load(path)
 
+        self.start_epoch = checkpoint['epoch']
+        self.best_precision = checkpoint['best_precision']
+        self.model.load_state_dict(checkpoint['state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer'])
+
+        print("[#] Loaded Checkpoint '{}' (epoch {})"
+            .format(self.config.checkpoints.ckpt_fname, self.start_epoch))
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
