@@ -237,8 +237,8 @@ class Trainer_B(object):
         self.train_loss = 0
         self.model.train()
         for batch_idx, (fdm, parameters, tdm) in enumerate(self.data):
-            print('FDM Shape : {}'.format(fdm[0].size()))
-            print('TDM Shape : {}'.format(tdm[0].size()))
+            # print('FDM Shape : {}'.format(fdm[0].size()))
+            # print('TDM Shape : {}'.format(tdm[0].size()))
             if self.config.gpu:
                 fdm = fdm.to(device)
                 parameters = parameters.to(device)
