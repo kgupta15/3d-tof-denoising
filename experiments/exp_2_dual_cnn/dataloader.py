@@ -162,7 +162,7 @@ def loadTrainingData_B(args):
 			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
 			fdm.append(false_dm)
 			true_dm = np.fromfile(join(gt, i), dtype=np.int32)
-			true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).resize((424, 512), Image.ANTIALIAS).astype(np.uint8))
+			true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).astype(np.uint8)).resize((424, 512), Image.ANTIALIAS)
 			tdm.append(true_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
@@ -179,20 +179,20 @@ def loadTestData_B(args):
 	tdm = []
 	parameters = []
 	for i in image_files[:4]:
-		# try:
-		false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-		false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
-		fdm.append(false_dm)
-		true_dm = np.fromfile(join(gt, i), dtype=np.int32)
-		true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).astype(np.uint8)).resize((424, 512), Image.ANTIALIAS)
-		tdm.append(true_dm)
-		pos = param_filenames.index(i)
-		param = np.array(params[pos, 1:])
-		param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
-		# param = np.repeat(param[:, np.newaxis], 64, axis=1)
-		parameters.append(param)
-		# except Exception as e:
-		# 	print('[!] Error opening file {}, {}'.format(i, e))
+		try:
+			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			fdm.append(false_dm)
+			true_dm = np.fromfile(join(gt, i), dtype=np.int32)
+			true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).astype(np.uint8)).resize((424, 512), Image.ANTIALIAS)
+			tdm.append(true_dm)
+			pos = param_filenames.index(i)
+			param = np.array(params[pos, 1:])
+			param = np.where(param == '-point-light-source', 1, param).astype(np.float64)
+			# param = np.repeat(param[:, np.newaxis], 64, axis=1)
+			parameters.append(param)
+		except Exception as e:
+			print('[!] Error opening file {}, {}'.format(i, e))
 	return (fdm, parameters, tdm)
 
 def loadDeeptofTrainingData(args):
