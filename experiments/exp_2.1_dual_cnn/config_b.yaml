@@ -1,7 +1,7 @@
 title: 'exp_2:model_b'
 train:
   gpu: 1
-  resume: False
+  resume: True
   hyperparameters:
     lr: 0.001
     lr_decay: 0.5
@@ -10,7 +10,7 @@ train:
     momentum: 1
     weight_decay: 1
   checkpoints:
-    loc: 'runs/checkpoints'
+    loc: 'runs_b/checkpoints'
     ckpt_fname: 'checkpoint.pth.tar'
     best_ckpt_fname: 'best_checkpoint.pth.tar'
   logs: 

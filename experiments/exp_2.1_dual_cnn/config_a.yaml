@@ -10,7 +10,7 @@ train:
     momentum: 1
     weight_decay: 1
   checkpoints:
-    loc: 'runs/checkpoints'
+    loc: 'runs_a/checkpoints'
     ckpt_fname: 'checkpoint.pth.tar'
     best_ckpt_fname: 'best_checkpoint.pth.tar'
   logs: 
