@@ -4,6 +4,7 @@ import os
 from functools import reduce
 import shutil
 
+import matplotlib.pyplot as plt
 from tensorboardX import SummaryWriter
 import numpy as np
 import torch
@@ -238,6 +239,10 @@ class Trainer_B(object):
         for batch_idx, (fdm, parameters, tdm) in enumerate(self.data):
             print('FDM Shape : {}'.format(fdm[0].size()))
             print('TDM Shape : {}'.format(tdm[0].size()))
+            plt.imshow(fdm[0])
+            plt.show()
+            plt.imshow(tdm[0])
+            plt.show()
             if self.config.gpu:
                 fdm = fdm.to(device)
                 parameters = parameters.to(device)
