@@ -114,10 +114,10 @@ class Model_B(nn.Module):
         out = self.layer2(out)
         # print("Layer 2 Output Shape : {}".format(out.shape))
         out = self.layer3(out)
-        # N, C, H, W = out.shape
-        # out_param = out_param.unsqueeze(-1).unsqueeze(-1).expand(N, -1, H, W)
-        # out = torch.cat((out, out_param), dim=1)
-        # print("Layer 3 Output Shape : {}".format(out.shape))
+        N, C, H, W = out.shape
+        out_param = out_param.unsqueeze(-1).unsqueeze(-1).expand(N, -1, H, W)
+        out = torch.cat((out, out_param), dim=1)
+        print("Layer 3 Output Shape : {}".format(out.shape))
         out = self.layer4(out)
         # print("Layer 4 Output Shape : {}".format(out.shape))
         out = self.layer5(out)
