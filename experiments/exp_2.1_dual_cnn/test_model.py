@@ -44,11 +44,12 @@ print(out_img.shape)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Model_B(config_b)
+model = nn.DataParallel(model).to(device)
 os.chdir('/storage-pod/3d-tof-denoising/experiments/exp_2.1_dual_cnn/runs_b/checkpoints')
 bestckpt_file = 'best_checkpoint.pth.tar'
 ckpt_file = 'checkpoint.pth.tar'
 ckpt = torch.load(bestckpt_file)
-model.load_state_dict(ckpt['state_dict']).to(device)
+model.load_state_dict(ckpt['state_dict'])
 os.chdir('/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/reflection')
 fdm = np.fromfile('./1520215621736999', dtype=np.int32)
 fdm = Image.fromarray(fdm.reshape((424, 512, 9))[:,:,1])
