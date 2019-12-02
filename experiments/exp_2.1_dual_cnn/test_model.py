@@ -5,6 +5,7 @@ import yaml
 from PIL import Image
 import numpy as np
 import torch
+from torchvision import transforms, utils
 from mapper import *
 from model import *
 
