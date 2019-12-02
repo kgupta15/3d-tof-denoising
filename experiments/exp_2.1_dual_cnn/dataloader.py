@@ -124,7 +124,7 @@ def loadTrainingData_A(args):
 	for i in image_files:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9))[:,:,1])
 			fdm.append(false_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
@@ -141,7 +141,7 @@ def loadTestData_A(args):
 	for i in image_files:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9))[:,:,1])
 			fdm.append(false_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
@@ -159,10 +159,10 @@ def loadTrainingData_B(args):
 	for i in image_files:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9))[:,:,1])
 			fdm.append(false_dm)
 			true_dm = np.fromfile(join(gt, i), dtype=np.int32)
-			true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).astype(np.uint8)).resize((424, 512), Image.ANTIALIAS).transpose(Image.ROTATE_90)
+			true_dm = Image.fromarray(true_dm.reshape((1696, 2048))).resize((424, 512), Image.ANTIALIAS).transpose(Image.ROTATE_90)
 			tdm.append(true_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
@@ -181,10 +181,10 @@ def loadTestData_B(args):
 	for i in image_files:
 		try:
 			false_dm = np.fromfile(join(ref, i), dtype=np.int32)
-			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9)).astype(np.uint8)[:,:,1])
+			false_dm = Image.fromarray(false_dm.reshape((424, 512, 9))[:,:,1])
 			fdm.append(false_dm)
 			true_dm = np.fromfile(join(gt, i), dtype=np.int32)
-			true_dm = Image.fromarray(true_dm.reshape((1696, 2048)).astype(np.uint8)).resize((424, 512), Image.ANTIALIAS).transpose(Image.ROTATE_90)
+			true_dm = Image.fromarray(true_dm.reshape((1696, 2048))).resize((424, 512), Image.ANTIALIAS).transpose(Image.ROTATE_90)
 			tdm.append(true_dm)
 			pos = param_filenames.index(i)
 			param = np.array(params[pos, 1:])
