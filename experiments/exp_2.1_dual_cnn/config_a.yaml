@@ -1,7 +1,7 @@
 title: 'exp_2:model_a'
 train:
   gpu: 1
-  resume: True
+  resume: False
   hyperparameters:
     lr: 0.001
     lr_decay: 0.5
