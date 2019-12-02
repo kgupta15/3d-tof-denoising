@@ -47,7 +47,7 @@ model = Model_B(config_b)
 os.chdir('/storage-pod/3d-tof-denoising/experiments/exp_2.1_dual_cnn/runs_b/checkpoints')
 bestckpt_file = 'best_checkpoint.pth.tar'
 ckpt_file = 'checkpoint.pth.tar'
-ckpt = model.load(bestckpt_file)
+ckpt = torch.load(bestckpt_file)
 model.load_state_dict(ckpt['state_dict']).to(device)
 os.chdir('/storage-pod/3d-tof-denoising/data/FLAT/FLAT/kinect/reflection')
 fdm = np.fromfile('./1520215621736999', dtype=np.int32)
