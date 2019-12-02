@@ -9,6 +9,7 @@ import torch
 from torchvision import transforms, utils
 from mapper import *
 from model import *
+import matplotlib.pyplot as plt
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 with open('config_a.yaml', 'r') as file:
