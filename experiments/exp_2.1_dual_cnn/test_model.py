@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+from os.path import join
 import yaml
 from PIL import Image
 import numpy as np
