@@ -1,0 +1,95 @@
+% -----------------------------------------------------------------------------------------------
+% Flat Dataset
+% ------------------------------------------------------------------------------------------------
+
+@InProceedings{guo2018flat,
+  author = {Guo, Qi and Frosio, Iuri and Gallo, Orazio and Zickler, Todd and Kautz, Jan},
+  title = {Tackling 3D ToF Artifacts Through Learning and the FLAT Dataset},
+  booktitle = {The European Conference on Computer Vision (ECCV)},
+  month = {September},
+  year = {2018}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Traditional Approaches Section
+% ------------------------------------------------------------------------------------------------
+
+% The most basic approach Bilateral filtering
+% ★
+@inproceedings{tomasi1998bilateral,
+  title={Bilateral filtering for gray and color images.},
+  author={Tomasi, Carlo and Manduchi, Roberto},
+  booktitle={International Conference on Computer Vision},
+  volume={98},
+  year={1998}
+}
+
+% 
+% ★
+@inproceedings{zhang2014rolling,
+  title={Rolling guidance filter},
+  author={Zhang, Qi and Shen, Xiaoyong and Xu, Li and Jia, Jiaya},
+  booktitle={European Conference on Computer Vision},
+
+  year={2014},
+  organization={Springer}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Machine Learning Approaches Section 
+% ------------------------------------------------------------------------------------------------
+
+% DeepToF
+% Flat has compared their result with this DeepToF
+% ★★★★★
+@article{marco2017deeptof,
+  title={DeepToF: off-the-shelf real-time correction of multipath interference in time-of-flight imaging},
+  author={Marco, Julio and Hernandez, Quercus and Munoz, Adolfo and Dong, Yue and Jarabo, Adrian and Kim, Min H and Tong, Xin and Gutierrez, Diego},
+  journal={ACM Transactions on Graphics (ToG)},
+  volume={36},
+  number={6},
+  pages={219},
+  year={2017},
+  publisher={ACM}
+}
+
+
+% This paper use a very simple CNN appraoch to denoise synthesised data only.
+% 
+% ★★
+@inproceedings{bolsee2018cnn,
+  title={Cnn-based Denoising of Time-Of-Flight Depth Images},
+  author={Bolsee, Quentin and Munteanu, Adrian},
+  booktitle={2018 25th IEEE International Conference on Image Processing (ICIP)},
+  pages={510--514},
+  year={2018},
+  organization={IEEE}
+}
+
+% This paper uses GAN to find a mapping between features learned in synthesized data to real-world data.
+% ★★★
+@inproceedings{agresti2019unsupervised,
+  title={Unsupervised Domain Adaptation for ToF Data Denoising with Adversarial Learning},
+  author={Agresti, Gianluca and Schaefer, Henrik and Sartor, Piergiorgio and Zanuttigh, Pietro},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  pages={5584--5593},
+  year={2019}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Lighting models?
+% ------------------------------------------------------------------------------------------------
+
+@inproceedings{otoole2014slt,
+title={3D Shape and Indirect Appearance By Structured Light Transport},
+author={Matthew O’Toole, John Mather, Kiriakos Kutulakos},
+booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+year={2014}
+}
+
+@inproceedings{otoole2014temporalfreq,
+title={Temporal Frequency Probing for 5D Transient Analysis of Global Light Transport},
+author={Matthew O’Toole, Felix Heide, Lei Xiao, Matthias Hullin, Wolfgang Heidrich, Kiriakos Kutulakos},
+booktitle={SIGGRAPH},
+year={2014}
+}

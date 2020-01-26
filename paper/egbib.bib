@@ -1,0 +1,165 @@
+% -----------------------------------------------------------------------------------------------
+% Flat Dataset
+% ------------------------------------------------------------------------------------------------
+
+@InProceedings{guo2018flat,
+  author = {Guo, Qi and Frosio, Iuri and Gallo, Orazio and Zickler, Todd and Kautz, Jan},
+  title = {Tackling 3D ToF Artifacts Through Learning and the FLAT Dataset},
+  booktitle = {The European Conference on Computer Vision (ECCV)},
+  month = {September},
+  year = {2018}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Traditional Approaches Section
+% ------------------------------------------------------------------------------------------------
+
+% The most basic approach Bilateral filtering
+% ★
+@inproceedings{tomasi1998bilateral,
+  title={Bilateral filtering for gray and color images.},
+  author={Tomasi, Carlo and Manduchi, Roberto},
+  booktitle={International Conference on Computer Vision},
+  year={1998}
+}
+
+% 
+% ★
+@inproceedings{zhang2014rolling,
+  title={Rolling guidance filter},
+  author={Zhang, Qi and Shen, Xiaoyong and Xu, Li and Jia, Jiaya},
+  booktitle={European Conference on Computer Vision},
+  year={2014},
+  organization={Springer}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Machine Learning Approaches Section 
+% ------------------------------------------------------------------------------------------------
+
+% DeepToF
+% Flat has compared their result with this DeepToF
+% ★★★★★
+@article{marco2017deeptof,
+  title={{DeepToF}: Off-the-shelf real-time correction of multipath interference in {Time-Of-Flight} imaging},
+  author={Marco, Julio and Hernandez, Quercus and Munoz, Adolfo and Dong, Yue and Jarabo, Adrian and Kim, Min H and Tong, Xin and Gutierrez, Diego},
+  journal={ACM Transactions on Graphics (ToG)},
+  year={2017},
+  publisher={ACM}
+}
+
+
+% This paper use a very simple CNN appraoch to denoise synthesised data only.
+% 
+% ★★
+@inproceedings{bolsee2018cnn,
+  title={{CNN}-based Denoising of {Time-Of-Flight} Depth Images},
+  author={Bolsee, Quentin and Munteanu, Adrian},
+  booktitle={2018 25th IEEE International Conference on Image Processing (ICIP)},
+  year={2018},
+  organization={IEEE}
+}
+
+% This paper uses GAN to find a mapping between features learned in synthesized data to real-world data.
+% ★★★
+@inproceedings{agresti2019unsupervised,
+  title={Unsupervised Domain Adaptation for ToF Data Denoising with Adversarial Learning},
+  author={Agresti, Gianluca and Schaefer, Henrik and Sartor, Piergiorgio and Zanuttigh, Pietro},
+  booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+  year={2019}
+}
+
+% -----------------------------------------------------------------------------------------------
+% Lighting models?
+% ------------------------------------------------------------------------------------------------
+
+@inproceedings{otoole2014slt,
+title={3D Shape and Indirect Appearance By Structured Light Transport},
+author={O’Toole, Matthew and Mather, John and  Kutulakos, Kiriakos},
+booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+year={2014}
+}
+
+@inproceedings{otoole2014temporalfreq,
+title={Temporal Frequency Probing for 5D Transient Analysis of Global Light Transport},
+author={O’Toole, Matthew and Heide, Felix and Xiao, Lei and Hullin, Matthias and Wolfgan, Heidrich and Kutulakos, Kiriakos },
+booktitle={SIGGRAPH},
+year={2014}
+}
+
+@inproceedings{agresti2019,
+title={Unsupervised Domain Adaptation for ToF Data Denoising with Adversarial Learning},
+author={Agresti, Gianluca and Schaefer, Henrik and Sartor, Piergiorgio and Zanuttigh, Pietro },
+booktitle={Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition},
+year={2019}
+}
+
+@inproceedings{sterzentsenko2019,
+title={Self-Supervised Deep Depth Denoising
+},
+author={Sterzentsenko, Vladimiros and Saroglou, Leonidas and Chatzitofis, Anargyros and
+Thermos, Spyridon and Zioulis, Nikolaos and Doumanoglou, Alexandros and Zarpalas, Dimitrios  and Daras, Petros },
+booktitle={International Conference on Computer Vision},
+year={2019}
+}
+
+@inproceedings{bhandari2016,
+title={Signal Processing for {Time-of-Flight} Imaging Sensors},
+author={Bhandari, Ayush and Raskar, Ramesh },
+booktitle={IEEE Signal Processing Magazine},
+year={2016}
+}
+
+@inproceedings{bhandari2015,
+title={Resolving Multipath Interference in Kinect: An Inverse Problem Approach},
+author={Bhandari, Ayush and Feigin, Micha and Izadi, Shahram and Rhemann, Christoph and Schmidt, Mirko and Raskar, Ramesh },
+booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)
+},
+year={2015}
+}
+
+@inproceedings{naik2015,
+title={A Light Transport Model for Mitigating Multipath Interference in {Time-of-Flight} Sensors},
+author={Naik, Nikhil and Kadambi, Achuta and Rhemann, Christoph and Izadi, Shahram and
+Raskar, Ramesh and Bing Kang, Sing  },
+booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+year={2015}
+}
+
+@inproceedings{whyte2014,
+title={Review of Methods for Resolving Multi-path Interference in {Time-of-Flight} Range Cameras},
+author={Whyte, Refael and Streeter, Lee and Cree, Michael and Dorrington, Adrian },
+booktitle={IEEE},
+year={2014}
+}
+
+@inproceedings{otoole2014,
+title={3D Shape and Indirect Appearance By Structured Light Transport},
+author={O’Toole, Matthew and Mather, John and Kutulakos, Kiriakos },
+booktitle={Conference on Computer Vision and Pattern Recognition (CVPR)},
+year={2014}
+}
+
+@inproceedings{otoole2014siggraph,
+title={Temporal Frequency Probing for 5D Transient Analysis of Global Light Transport },
+author={O’Toole, Matthew and Heide, Felix and Xiao, Lei and Hullin, Matthias and Heidrich, Wolfgang and Kutulakos1, Kiriakos 
+},
+booktitle={SIGGRAPH},
+year={2014}
+}
+
+@inproceedings{jarabo2014,
+title={A framework for transient rendering},
+author={Jarabo, Adrian and
+Munoz, Julio Marco1 Adolfo and˜
+Buisan, Raul and Jarosz, Wojciech and Gutierrez, Diego },
+booktitle={SIGGRAPH Asia},
+year={2014}
+}
+
+@inproceedings{
+title={},
+author={},
+booktitle={},
+year={}
+}
