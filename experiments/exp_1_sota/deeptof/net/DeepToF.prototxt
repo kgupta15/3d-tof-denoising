@@ -1,0 +1,1429 @@
+# This file contains the architecture definition for the network described in the paper:
+#
+#   DeepToF: Off-the-Shelf Real-Time Correction of Multipath Interference in Time-of-Flight Imaging
+#   Julio Marco, Quercus Hernandez, Adolfo Muñoz, Yue Dong, Adrian Jarabo, Min H. Kim, Xin Tong, Diego Gutierrez
+#   ACM Transactions on Graphics, Vol.36(6)
+#
+# Copyright 2017 Julio Marco, Quercus Hernandez, Adolfo Muñoz, Yue Dong, Adrian Jarabo, Min H. Kim, Xin Tong, Diego Gutierrez
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+# and associated documentation files (the "Software"), to deal in the Software without restriction, 
+# including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+# and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+# subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included in all copies or substantial 
+#   portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
+#   LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+#   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+#   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+#   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+name: "DeepToF"
+
+# Input ToF depth captured or simulated at 20MHz modulation frequency
+layer {name: "data"
+    type: "Input"
+    top: "tof_depth"
+    input_param { shape: { dim: 1 dim: 1 dim: 256 dim: 256 } }
+}
+#################################################################################
+layer { name: "conv_in"
+  type: "Convolution"
+  bottom: "tof_depth"
+  top: "conv_in"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    group: 1 # CONV GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv_in_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv_in"
+  top: "conv_in_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv_in_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv_in"
+  top: "conv_in_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv_in_BN_scaled"
+    bottom: "conv_in_BN_prescale"
+    top: "conv_in_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ_in"
+  type: "ReLU"
+  bottom: "conv_in_BN"
+  top: "conv_in_BN"
+}
+
+#################################################################################
+layer { name: "conv0"
+  type: "Convolution"
+  bottom: "conv_in_BN"
+  top: "conv0"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 2
+    group: 1 # CONV GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv0_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv0"
+  top: "conv0_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv0_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv0"
+  top: "conv0_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv0_BN_scaled"
+    bottom: "conv0_BN_prescale"
+    top: "conv0_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ0"
+  type: "ReLU"
+  bottom: "conv0_BN"
+  top: "conv0_BN"
+}
+
+#################################################################################
+layer { name: "conv1"
+  type: "Convolution"
+  bottom: "conv0_BN"
+  top: "conv1"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5 # CONV 1
+    pad: 2 # CONV 1
+    stride: 1 # CONV 1
+    group: 1 # CONV 1 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv1_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv1"
+  top: "conv1_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv1_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv1"
+  top: "conv1_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv1_BN_scaled"
+    bottom: "conv1_BN_prescale"
+    top: "conv1_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ1"
+  type: "ReLU"
+  bottom: "conv1_BN"
+  top: "conv1_BN"
+}
+
+
+layer { name: "conv1_2"
+  type: "Convolution"
+  bottom: "conv1_BN"
+  top: "conv1_2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5 # CONV 2
+    pad: 2 # CONV 2
+    stride: 2 # CONV 2
+    group: 1 # CONV 2 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv1_2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv1_2"
+  top: "conv1_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv1_2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv1_2"
+  top: "conv1_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv1_2_BN_scaled"
+    bottom: "conv1_2_BN_prescale"
+    top: "conv1_2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ1_2"
+  type: "ReLU"
+  bottom: "conv1_2_BN"
+  top: "conv1_2_BN"
+}
+
+
+#################################################################################
+layer { name: "conv2"
+  type: "Convolution"
+  bottom: "conv1_2_BN"
+  top: "conv2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5 # CONV 1
+    pad: 2 # CONV 1
+    stride: 1 # CONV 1
+    group: 1 # CONV 1 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv2"
+  top: "conv2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv2"
+  top: "conv2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv2_BN_scaled"
+    bottom: "conv2_BN_prescale"
+    top: "conv2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ2"
+  type: "ReLU"
+  bottom: "conv2_BN"
+  top: "conv2_BN"
+}
+
+
+layer { name: "conv2_2"
+  type: "Convolution"
+  bottom: "conv2_BN"
+  top: "conv2_2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5 # CONV 2
+    pad: 2 # CONV 2
+    stride: 2 # CONV 2
+    group: 1 # CONV 2 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv2_2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv2_2"
+  top: "conv2_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv2_2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv2_2"
+  top: "conv2_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv2_2_BN_scaled"
+    bottom: "conv2_2_BN_prescale"
+    top: "conv2_2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ2_2"
+  type: "ReLU"
+  bottom: "conv2_2_BN"
+  top: "conv2_2_BN"
+}
+
+#################################################################################
+layer { name: "conv3"
+  type: "Convolution"
+  bottom: "conv2_2_BN"
+  top: "conv3"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 1
+    pad: 2 # CONV 1
+    stride: 1 # CONV 1
+    group: 1 # CONV 1 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv3_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv3"
+  top: "conv3_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv3_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv3"
+  top: "conv3_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv3_BN_scaled"
+    bottom: "conv3_BN_prescale"
+    top: "conv3_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ3"
+  type: "ReLU"
+  bottom: "conv3_BN"
+  top: "conv3_BN"
+}
+
+
+layer { name: "conv3_2"
+  type: "Convolution"
+  bottom: "conv3_BN"
+  top: "conv3_2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 2
+    pad: 2 # CONV 2
+    stride: 2 # CONV 2
+    group: 1 # CONV 2 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv3_2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv3_2"
+  top: "conv3_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv3_2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv3_2"
+  top: "conv3_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv3_2_BN_scaled"
+    bottom: "conv3_2_BN_prescale"
+    top: "conv3_2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ3_2"
+  type: "ReLU"
+  bottom: "conv3_2_BN"
+  top: "conv3_2_BN"
+}
+
+#################################################################################
+layer { name: "conv4"
+  type: "Convolution"
+  bottom: "conv3_2_BN"
+  top: "conv4"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 1
+    pad: 2 # CONV 1
+    stride: 1 # CONV 1
+    group: 1 # CONV 1 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv4_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv4"
+  top: "conv4_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv4_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv4"
+  top: "conv4_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv4_BN_scaled"
+    bottom: "conv4_BN_prescale"
+    top: "conv4_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ4"
+  type: "ReLU"
+  bottom: "conv4_BN"
+  top: "conv4_BN"
+}
+
+
+layer { name: "conv4_2"
+  type: "Convolution"
+  bottom: "conv4_BN"
+  top: "conv4_2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 2
+    pad: 2 # CONV 2
+    stride: 2 # CONV 2
+    group: 1 # CONV 2 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv4_2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv4_2"
+  top: "conv4_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv4_2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv4_2"
+  top: "conv4_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv4_2_BN_scaled"
+    bottom: "conv4_2_BN_prescale"
+    top: "conv4_2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ4_2"
+  type: "ReLU"
+  bottom: "conv4_2_BN"
+  top: "conv4_2_BN"
+}
+
+#################################################################################
+layer { name: "conv5" 
+  type: "Convolution"
+  bottom: "conv4_2_BN"
+  top: "conv5"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 1
+    pad: 2 # CONV 1
+    stride: 1 # CONV 1
+    group: 1 # CONV 1 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv5_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv5"
+  top: "conv5_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv5_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv5"
+  top: "conv5_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv5_BN_scaled"
+    bottom: "conv5_BN_prescale"
+    top: "conv5_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ5"
+  type: "ReLU"
+  bottom: "conv5_BN"
+  top: "conv5_BN"
+}
+
+
+layer { name: "conv5_2"
+  type: "Convolution"
+  bottom: "conv5_BN"
+  top: "conv5_2"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 } # CONV FILTER PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 0 decay_mult: 1 } # CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5 # CONV 2
+    pad: 2 # CONV 2
+    stride: 2 # CONV 2
+    group: 1 # CONV 2 GROUP
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "conv5_2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "conv5_2"
+  top: "conv5_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv5_2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "conv5_2"
+  top: "conv5_2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true # CONV GLOBAL STATS
+    # moving_average_fraction: 0.95 # CONV MAF
+  }
+}
+
+layer { name: "conv5_2_BN_scaled"
+    bottom: "conv5_2_BN_prescale"
+    top: "conv5_2_BN"
+    type: "Scale"
+    param {lr_mult: 0}  param {lr_mult: 0} # CONV SCALE LR 
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "activ5_2"
+  type: "ReLU"
+  bottom: "conv5_2_BN"
+  top: "conv5_2_BN"
+}
+
+layer { name: "dconv5"
+  type: "Deconvolution"
+  bottom: "conv5_2_BN"
+  top: "dconv5"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 32
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 32 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv4_BN_bypass"
+    bottom: "conv4_2_BN_prescale"
+    top: "conv4_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv5_conv5"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv5"
+  bottom: "conv4_BN_bypass"
+  top: "dconv5_conv5"
+}
+
+layer { name: "dconv5_conv5_conv"
+  type: "Convolution"
+  bottom: "dconv5_conv5"
+  top: "dconv5_conv5_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv5_conv5_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv5_conv5_conv"
+  top: "dconv5_conv5_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv5_conv5_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv5_conv5_conv"
+  top: "dconv5_conv5_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv5_conv5_BN_scaled"
+    bottom: "dconv5_conv5_BN_prescale"
+    top: "dconv5_conv5_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv5"
+  type: "ReLU"
+  bottom: "dconv5_conv5_BN"
+  top: "dconv5_conv5_BN"
+}
+
+#################################################################################
+layer { name: "dconv4"
+  type: "Deconvolution"
+  bottom: "dconv5_conv5_BN"
+  top: "dconv4"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 32
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 32 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv3_BN_bypass"
+    bottom: "conv3_2_BN_prescale"
+    top: "conv3_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv4_conv4"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv4"
+  bottom: "conv3_BN_bypass"
+  top: "dconv4_conv4"
+}
+
+layer { name: "dconv4_conv4_conv"
+  type: "Convolution"
+  bottom: "dconv4_conv4"
+  top: "dconv4_conv4_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 32
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv4_conv4_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv4_conv4_conv"
+  top: "dconv4_conv4_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv4_conv4_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv4_conv4_conv"
+  top: "dconv4_conv4_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv4_conv4_BN_scaled"
+    bottom: "dconv4_conv4_BN_prescale"
+    top: "dconv4_conv4_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv4"
+  type: "ReLU"
+  bottom: "dconv4_conv4_BN"
+  top: "dconv4_conv4_BN"
+}
+
+#################################################################################
+layer { name: "dconv3"
+  type: "Deconvolution"
+  bottom: "dconv4_conv4_BN"
+  top: "dconv3"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 16
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 16 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv2_BN_bypass"
+    bottom: "conv2_2_BN_prescale"
+    top: "conv2_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv3_conv3"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv3"
+  bottom: "conv2_BN_bypass"
+  top: "dconv3_conv3"
+}
+
+layer { name: "dconv3_conv3_conv"
+  type: "Convolution"
+  bottom: "dconv3_conv3"
+  top: "dconv3_conv3_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv3_conv3_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv3_conv3_conv"
+  top: "dconv3_conv3_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv3_conv3_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv3_conv3_conv"
+  top: "dconv3_conv3_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv3_conv3_BN_scaled"
+    bottom: "dconv3_conv3_BN_prescale"
+    top: "dconv3_conv3_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv3"
+  type: "ReLU"
+  bottom: "dconv3_conv3_BN"
+  top: "dconv3_conv3_BN"
+}
+
+#################################################################################
+layer { name: "dconv2"
+  type: "Deconvolution"
+  bottom: "dconv3_conv3_BN"
+  top: "dconv2"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 16
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 16 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv1_BN_bypass"
+    bottom: "conv1_2_BN_prescale"
+    top: "conv1_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv2_conv2"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv2"
+  bottom: "conv1_BN_bypass"
+  top: "dconv2_conv2"
+}
+
+layer { name: "dconv2_conv2_conv"
+  type: "Convolution"
+  bottom: "dconv2_conv2"
+  top: "dconv2_conv2_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv2_conv2_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv2_conv2_conv"
+  top: "dconv2_conv2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv2_conv2_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv2_conv2_conv"
+  top: "dconv2_conv2_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv2_conv2_BN_scaled"
+    bottom: "dconv2_conv2_BN_prescale"
+    top: "dconv2_conv2_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv2"
+  type: "ReLU"
+  bottom: "dconv2_conv2_BN"
+  top: "dconv2_conv2_BN"
+}
+
+#################################################################################
+layer { name: "dconv1"
+  type: "Deconvolution"
+  bottom: "dconv2_conv2_BN"
+  top: "dconv1"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 16
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 16 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv0_BN_bypass"
+    bottom: "conv0_BN_prescale"
+    top: "conv0_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv1_conv1"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv1"
+  bottom: "conv0_BN_bypass"
+  top: "dconv1_conv1"
+}
+
+layer { name: "dconv1_conv1_conv"
+  type: "Convolution"
+  bottom: "dconv1_conv1"
+  top: "dconv1_conv1_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv1_conv1_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv1_conv1_conv"
+  top: "dconv1_conv1_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv1_conv1_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv1_conv1_conv"
+  top: "dconv1_conv1_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv1_conv1_BN_scaled"
+    bottom: "dconv1_conv1_BN_prescale"
+    top: "dconv1_conv1_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv1"
+  type: "ReLU"
+  bottom: "dconv1_conv1_BN"
+  top: "dconv1_conv1_BN"
+}
+
+#################################################################################
+layer { name: "dconv0"
+  type: "Deconvolution"
+  bottom: "dconv1_conv1_BN"
+  top: "dconv0"
+  # # learning rate and decay multipliers for the filters
+  param { lr_mult: 0 decay_mult: 1 }
+  # # learning rate and decay multipliers for the biases
+  # param { lr_mult: 1 decay_mult: 1 }
+  convolution_param {
+    num_output: 16
+    kernel_size: 6 # DECONV
+    pad: 2 # CONV
+    stride: 2 # CONV
+    group: 16 # DECONV GROUP
+    bias_term: false # DECONV BIAS
+    weight_filler {
+        type: "bilinear" #DCONV FILLER
+    }
+  }
+}
+
+layer { name: "conv_in_BN_bypass"
+    bottom: "conv_in_BN_prescale"
+    top: "conv_in_BN_bypass"
+    type: "Power"
+    power_param {
+      power: 1
+      scale: 1 # SCALE BYPASS
+      shift: 0
+    }
+}
+
+layer { name: "dconv0_conv0"
+  type: "Eltwise"
+  eltwise_param { operation: SUM }
+  bottom: "dconv0"
+  bottom: "conv_in_BN_bypass"
+  top: "dconv0_conv0"
+}
+
+layer { name: "dconv0_conv0_conv"
+  type: "Convolution"
+  bottom: "dconv0_conv0"
+  top: "dconv0_conv0_conv"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { name: "dconv0_conv0_BN"
+  type: "BatchNorm" 
+  include { phase: TRAIN }
+  bottom: "dconv0_conv0_conv"
+  top: "dconv0_conv0_BN_prescale"
+  batch_norm_param {
+    use_global_stats: false
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv0_conv0_BN"
+  type: "BatchNorm" 
+  include { phase: TEST }
+  bottom: "dconv0_conv0_conv"
+  top: "dconv0_conv0_BN_prescale"
+  batch_norm_param {
+    use_global_stats: true
+    # moving_average_fraction: 0.95 # MAF DCONV CONV 
+  }
+}
+
+layer { name: "dconv0_conv0_BN_scaled"
+    bottom: "dconv0_conv0_BN_prescale"
+    top: "dconv0_conv0_BN"
+    type: "Scale"
+    param {lr_mult: 1}  param {lr_mult: 1} # DCONV CONV SCALE LR  
+    scale_param {
+        bias_term: true
+    }
+}
+
+layer { name: "dactiv0"
+  type: "ReLU"
+  bottom: "dconv0_conv0_BN"
+  top: "dconv0_conv0_BN"
+}
+
+#################################################################################
+layer { name: "conv_out"
+  type: "Convolution"
+  bottom: "dconv0_conv0_BN"
+  top: "conv_out"
+  # learning rate and decay multipliers for the filters
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV FILT PARAM
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 1 decay_mult: 1 } #DCONV CONV BIAS PARAM
+  convolution_param {
+    num_output: 1
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+        type: "xavier" # CONV FILLER
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+# Estimated depth correcting MPI
+layer { name: "est_depth"
+  type: "ReLU"
+  bottom: "conv_out"
+  top: "est_depth"
+}
